@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CBT Good Governance</title>
+<style>
+body{font-family:Arial;background:linear-gradient(135deg,#0f172a,#2563eb);margin:0;padding:20px;color:white}
+.container{max-width:900px;margin:auto;background:white;color:#222;padding:25px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.option{display:block;padding:12px;margin:10px 0;border:2px solid #ddd;border-radius:12px;cursor:pointer}
+.option:hover{background:#eef}
+button{padding:12px 20px;border:none;border-radius:10px;background:#2563eb;color:white;font-weight:bold;cursor:pointer}
+.progress{height:14px;background:#ddd;border-radius:10px;overflow:hidden}
+.bar{height:100%;background:#2563eb;width:0%}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎓 CBT Good Governance & Anti Korupsi</h1>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p id="counter"></p>
+<div id="quiz"></div>
+</div>
+
+<script>
+const questions=[{q:"Prinsip Good University Governance yang menuntut keterbukaan informasi adalah?",o:['Nirlaba', 'Transparansi', 'Akuntabilitas', 'Efektivitas'],a:1},{q:"SPIP merupakan singkatan dari?",o:['Sistem Pengendalian Intern Pemerintah', 'Sistem Penilaian Integritas Publik', 'Standar Pengawasan Internal Publik', 'Sistem Pengelolaan Informasi Pemerintah'],a:0},{q:"Tujuan Reformasi Birokrasi adalah?",o:['Profesional dan bebas KKN', 'Mencari keuntungan', 'Berorientasi kekuasaan', 'Tertutup'],a:0},{q:"Zona Integritas bertujuan menuju?",o:['WBK dan WBBM', 'BUMN', 'BPK', 'ASN'],a:0},{q:"Tahap pertama penyuluhan anti korupsi?",o:['Evaluasi', 'Pelaksanaan', 'Perencanaan', 'Laporan'],a:2},{q:"Salah satu unsur SPIP?",o:['Penilaian Risiko', 'Promosi', 'Pajak', 'Investasi'],a:0},{q:"TNA adalah singkatan dari?",o:['Training Need Analysis', 'Total Need Assessment', 'Training New Activity', 'Target Need Action'],a:0},{q:"Karakteristik Good Governance terkait pertanggungjawaban?",o:['Partisipasi', 'Akuntabilitas', 'Konsensus', 'Visi'],a:1},{q:"Tidak mencari keuntungan disebut prinsip?",o:['Nirlaba', 'Transparansi', 'Mutu', 'Demokrasi'],a:0},{q:"Permainan peran disebut?",o:['Fishbowl', 'Role Playing', 'Pecha Kucha', 'Demonstrasi'],a:1},{q:"Prinsip GUG berjumlah?",o:['3', '4', '5', '6'],a:2},{q:"Akuntabilitas berarti?",o:['Kerahasiaan', 'Pertanggungjawaban', 'Keuntungan', 'Persaingan'],a:1},{q:"Penegakan hukum dalam Good Governance disebut?",o:['Rule of Law', 'Equity', 'Vision', 'Consensus'],a:0},{q:"Daya tanggap disebut?",o:['Responsiveness', 'Participation', 'Efficiency', 'Vision'],a:0},{q:"WBK adalah?",o:['Wilayah Bebas dari Korupsi', 'Wilayah Bersih Kinerja', 'Wawasan Birokrasi Kerja', 'Wilayah Binaan KPK'],a:0},{q:"WBBM adalah?",o:['Wilayah Birokrasi Bersih dan Melayani', 'Wilayah Bebas Birokrasi Modern', 'Wilayah Bersih Bermartabat', 'Wilayah Binaan BPK'],a:0},{q:"Tujuan SPIP terkait aset negara adalah?",o:['Pengamanan aset', 'Penjualan aset', 'Pajak aset', 'Audit aset'],a:0},{q:"Unsur SPIP yang mengidentifikasi ancaman?",o:['Penilaian Risiko', 'Komunikasi', 'Pemantauan', 'Lingkungan'],a:0},{q:"Metode penyuluhan 20 slide x 20 detik?",o:['Fishbowl', 'Pecha Kucha', 'Brainstorming', 'Role Play'],a:1},{q:"Tahap akhir penyuluhan?",o:['Laporan', 'Perencanaan', 'Analisis', 'TNA'],a:0},{q:"Partisipasi dalam Good Governance harus?",o:['Sukarela', 'Dipaksa', 'Rahasia', 'Terbatas'],a:0},{q:"Visi Reformasi Birokrasi adalah?",o:['Pemerintah amanah', 'Keuntungan tinggi', 'Privatisasi', 'Sentralisasi'],a:0},{q:"TOR disusun dengan pendekatan?",o:['5W+1H', 'SWOT', 'PDCA', 'FIFO'],a:0},{q:"Efektivitas dan efisiensi berarti?",o:['Menghindari pemborosan', 'Menambah biaya', 'Mengurangi mutu', 'Menutup informasi'],a:0},{q:"Siapa yang bertanggung jawab terhadap SPIP?",o:['Pimpinan dan seluruh pegawai', 'Auditor saja', 'Pimpinan saja', 'Pegawai baru'],a:0}];
+let current=0,score=0;
+
+function render(){
+let q=questions[current];
+document.getElementById("bar").style.width=((current)/questions.length*100)+"%";
+document.getElementById("counter").innerHTML="Soal "+(current+1)+" dari "+questions.length;
+document.getElementById("quiz").innerHTML=`
+<h3>${q.q}</h3>
+${q.o.map((x,i)=>`<label class='option'><input type='radio' name='a' value='${i}'> ${x}</label>`).join("")}
+<button onclick='nextQ()'>Jawab</button>`;
+}
+
+function nextQ(){
+let c=document.querySelector("input[name=a]:checked");
+if(!c){alert("Pilih jawaban terlebih dahulu");return;}
+if(parseInt(c.value)===questions[current].a) score++;
+current++;
+if(current<questions.length) render();
+else finish();
+}
+
+function finish(){
+let nilai=Math.round(score/questions.length*100);
+document.getElementById("bar").style.width="100%";
+document.getElementById("quiz").innerHTML=`
+<h2>🏆 Ujian Selesai</h2>
+<h1>${nilai}</h1>
+<p>Benar: ${score} dari ${questions.length}</p>
+<p>${nilai>=80?"Sangat Baik":nilai>=60?"Baik":"Perlu Belajar Lagi"}</p>
+<button onclick='location.reload()'>Ulangi CBT</button>`;
+}
+
+render();
+</script>
+</body>
+</html>
