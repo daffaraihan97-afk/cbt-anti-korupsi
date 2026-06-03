@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>CBT Premium</title>
+<style>
+body{font-family:Arial;margin:0;background:linear-gradient(135deg,#0f172a,#4f46e5);color:#fff}
+.wrap{max-width:1000px;margin:auto;padding:20px}.card{background:#fff;color:#111;padding:20px;border-radius:16px}
+input,button{padding:12px;border-radius:10px}button{background:#4f46e5;color:#fff;border:none}
+.exam,.result{display:none}.opt{display:block;margin:8px 0;padding:10px;border:1px solid #ccc;border-radius:8px}
+.progress{height:10px;background:#ddd}.bar{height:10px;background:#4f46e5;width:0%}
+</style></head><body>
+<div class='wrap'>
+<div class='card' id='login'><h1>🎓 CBT Premium</h1><input id='nama' placeholder='Nama Peserta'><button onclick='mulai()'>Mulai</button></div>
+<div class='card exam' id='exam'><div id='timer'>30:00</div><div class='progress'><div class='bar' id='bar'></div></div><h3 id='q'></h3><div id='opsi'></div><button onclick='prev()'>Prev</button><button onclick='next()'>Next</button><button onclick='finish()'>Selesai</button></div>
+<div class='card result' id='result'><h1 id='nilai'></h1><p id='ket'></p></div>
+</div>
+<script>
+const qs=[
+['Prinsip keterbukaan informasi?', ['Nirlaba','Transparansi','Mutu','Demokrasi'],1],
+['SPIP singkatan?', ['Sistem Pengendalian Intern Pemerintah','Lainnya','Lainnya','Lainnya'],0]
+];
+while(qs.length<25){qs.push(['Soal latihan '+(qs.length+1),['A','B','C','D'],0]);}
+let c=0,ans=Array(qs.length).fill(null),sec=1800;
+function mulai(){document.getElementById('login').style.display='none';document.getElementById('exam').style.display='block';show();setInterval(()=>{sec--;let m=Math.floor(sec/60),s=sec%60;timer.innerText=(m+'').padStart(2,'0')+':'+(s+'').padStart(2,'0');if(sec<=0)finish();},1000);}
+function show(){bar.style.width=((c+1)/qs.length*100)+'%';q.innerText='Soal '+(c+1)+': '+qs[c][0];opsi.innerHTML=qs[c][1].map((x,i)=>`<label class='opt'><input type='radio' name='a' ${ans[c]==i?'checked':''} onchange='ans[${c}]=${i}'> ${x}</label>`).join('');}
+function next(){if(c<qs.length-1)c++;show();}
+function prev(){if(c>0)c--;show();}
+function finish(){let s=0;qs.forEach((q,i)=>{if(ans[i]==q[2])s++;});let n=Math.round(s/qs.length*100);exam.style.display='none';result.style.display='block';nilai.innerText='Nilai '+n;ket.innerText='Benar '+s+' dari '+qs.length;}
+</script></body></html>
