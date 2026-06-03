@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBT Good Governance & Anti Korupsi</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#2563EB;--primary-dark:#1e40af;--primary-light:#dbeafe;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --success:#16a34a;--success-light:#dcfce7;
+  --danger:#dc2626;--danger-light:#fee2e2;
+  --warning:#d97706;--warning-light:#fef3c7;
+  --gray:#6b7280;--gray-light:#f3f4f6;
+  --white:#ffffff;--text:#111827;--text-muted:#6b7280;
+  --border:#e5e7eb;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.08);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#eff6ff 0%,#f5f3ff 100%);min-height:100vh;color:var(--text)}
+.page{display:none}.page.active{display:block}
+
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+.login-card{background:var(--white);border-radius:20px;box-shadow:0 8px 40px rgba(37,99,235,.15);padding:2.5rem;width:100%;max-width:440px;text-align:center}
+.login-logo{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:2rem;color:#fff}
+.login-card h1{font-size:1.4rem;font-weight:700;color:var(--primary-dark);margin-bottom:.25rem}
+.login-card p{color:var(--text-muted);font-size:.9rem;margin-bottom:1.75rem;line-height:1.5}
+.login-card input{width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius);font-size:1rem;transition:.2s;outline:none}
+.login-card input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+.btn-start{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--primary),var(--purple));color:#fff;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer;margin-top:1rem;transition:.2s;letter-spacing:.02em}
+.btn-start:hover{opacity:.9;transform:translateY(-1px)}
+.login-info{display:flex;gap:1rem;margin-top:1.5rem;justify-content:center}
+.info-chip{background:var(--gray-light);border-radius:20px;padding:.35rem .85rem;font-size:.8rem;color:var(--text-muted)}
+
+/* EXAM LAYOUT */
+.exam-wrap{display:flex;flex-direction:column;min-height:100vh}
+.exam-header{background:linear-gradient(90deg,var(--primary-dark),var(--purple));padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.exam-header .brand{color:#fff;font-weight:700;font-size:1rem}
+.header-info{display:flex;align-items:center;gap:1rem}
+.timer-box{background:rgba(255,255,255,.15);border-radius:8px;padding:.4rem .85rem;color:#fff;font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:.5rem;min-width:100px}
+.timer-box.warn{background:rgba(239,68,68,.7);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.peserta-name{color:rgba(255,255,255,.85);font-size:.85rem}
+
+.exam-body{display:flex;flex:1;gap:0}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--white);border-right:1px solid var(--border);padding:1rem;overflow-y:auto;flex-shrink:0}
+.sidebar h3{font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+.num-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.num-btn{width:100%;aspect-ratio:1;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;font-weight:600;cursor:pointer;transition:.15s;background:var(--white);color:var(--text)}
+.num-btn.answered{background:var(--primary);border-color:var(--primary);color:#fff}
+.num-btn.flagged{background:var(--warning-light);border-color:var(--warning);color:var(--warning)}
+.num-btn.answered.flagged{background:linear-gradient(135deg,var(--primary),var(--warning));border-color:var(--warning);color:#fff}
+.num-btn.current{box-shadow:0 0 0 2px var(--primary)}
+.legend{margin-top:1rem;font-size:.75rem;color:var(--text-muted)}
+.legend-item{display:flex;align-items:center;gap:.4rem;margin-bottom:.35rem}
+.leg-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+.sidebar-actions{margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem}
+.btn-submit-sidebar{width:100%;padding:.6rem;background:var(--success);color:#fff;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer}
+.btn-submit-sidebar:hover{background:#15803d}
+
+/* MAIN QUESTION */
+.question-main{flex:1;padding:1.5rem;max-width:760px;overflow-y:auto}
+.progress-wrap{margin-bottom:1.25rem}
+.progress-label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--text-muted);margin-bottom:.4rem}
+.progress-bar{height:7px;background:var(--gray-light);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--purple));border-radius:99px;transition:.3s}
+.question-card{background:var(--white);border-radius:16px;box-shadow:var(--shadow);padding:1.75rem;margin-bottom:1.25rem}
+.question-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.q-badge{background:var(--primary-light);color:var(--primary-dark);font-size:.78rem;font-weight:700;padding:.25rem .7rem;border-radius:20px}
+.q-text{font-size:1rem;line-height:1.7;color:var(--text);font-weight:500;margin-bottom:1.25rem}
+.options{display:flex;flex-direction:column;gap:.6rem}
+.option-btn{width:100%;text-align:left;padding:.85rem 1rem;border:1.5px solid var(--border);border-radius:10px;background:var(--white);cursor:pointer;font-size:.92rem;transition:.15s;display:flex;align-items:flex-start;gap:.75rem;line-height:1.5}
+.option-btn:hover{border-color:var(--primary);background:var(--primary-light)}
+.option-btn.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);font-weight:500}
+.option-letter{width:26px;height:26px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:.1rem}
+.nav-bar{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+.btn-nav{padding:.6rem 1.25rem;border-radius:var(--radius);font-size:.88rem;font-weight:600;cursor:pointer;transition:.15s}
+.btn-prev{background:var(--gray-light);border:1.5px solid var(--border);color:var(--text)}
+.btn-prev:hover{background:var(--border)}
+.btn-next{background:var(--primary);border:none;color:#fff}
+.btn-next:hover{background:var(--primary-dark)}
+.btn-flag{background:var(--warning-light);border:1.5px solid var(--warning);color:var(--warning);margin-left:auto}
+.btn-flag.active{background:var(--warning);color:#fff}
+.btn-submit{background:var(--success);border:none;color:#fff;padding:.6rem 1.4rem;border-radius:var(--radius);font-size:.88rem;font-weight:600;cursor:pointer}
+
+/* RESULT */
+.result-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.result-card{background:var(--white);border-radius:20px;box-shadow:0 8px 40px rgba(37,99,235,.12);padding:2rem;width:100%;max-width:560px}
+.result-header{text-align:center;margin-bottom:1.5rem}
+.score-circle{width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2.2rem;font-weight:800;color:#fff}
+.score-circle.grade-a{background:linear-gradient(135deg,#16a34a,#15803d)}
+.score-circle.grade-b{background:linear-gradient(135deg,#2563eb,#1d4ed8)}
+.score-circle.grade-c{background:linear-gradient(135deg,#d97706,#b45309)}
+.score-circle.grade-d{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.predikat{font-size:1.2rem;font-weight:700;margin-bottom:.25rem}
+.result-name{color:var(--text-muted);font-size:.9rem}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1.25rem 0}
+.stat-box{background:var(--gray-light);border-radius:10px;padding:.85rem;text-align:center}
+.stat-num{font-size:1.5rem;font-weight:700}
+.stat-label{font-size:.75rem;color:var(--text-muted);margin-top:.2rem}
+.stat-box.correct .stat-num{color:var(--success)}
+.stat-box.wrong .stat-num{color:var(--danger)}
+canvas{width:100%!important;margin:1rem 0}
+.result-actions{display:flex;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap}
+.btn-review{flex:1;padding:.7rem;background:var(--primary-light);color:var(--primary-dark);border:none;border-radius:var(--radius);font-weight:600;cursor:pointer;font-size:.9rem}
+.btn-retry{flex:1;padding:.7rem;background:linear-gradient(135deg,var(--primary),var(--purple));color:#fff;border:none;border-radius:var(--radius);font-weight:600;cursor:pointer;font-size:.9rem}
+
+/* REVIEW */
+.review-wrap{padding:1.5rem;max-width:800px;margin:0 auto}
+.review-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.btn-back{padding:.5rem 1rem;background:var(--gray-light);border:none;border-radius:var(--radius);cursor:pointer;font-weight:600}
+.review-item{background:var(--white);border-radius:14px;box-shadow:var(--shadow);padding:1.25rem;margin-bottom:1rem;border-left:4px solid var(--border)}
+.review-item.correct-item{border-left-color:var(--success)}
+.review-item.wrong-item{border-left-color:var(--danger)}
+.review-item.unanswered-item{border-left-color:var(--warning)}
+.review-q{font-size:.95rem;font-weight:600;margin-bottom:.85rem;line-height:1.6}
+.review-option{padding:.5rem .85rem;border-radius:8px;margin-bottom:.35rem;font-size:.88rem;display:flex;align-items:center;gap:.5rem}
+.review-option.user-ans{background:var(--danger-light);color:var(--danger)}
+.review-option.correct-ans{background:var(--success-light);color:var(--success);font-weight:600}
+.review-option.user-correct{background:var(--success-light);color:var(--success);font-weight:600}
+.pembahasan{background:var(--primary-light);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;font-size:.85rem;color:var(--primary-dark);line-height:1.6}
+.pembahasan strong{display:block;margin-bottom:.25rem}
+
+/* MODAL CONFIRM */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:999;display:none}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:16px;padding:2rem;max-width:400px;width:90%;text-align:center}
+.modal h3{font-size:1.2rem;margin-bottom:.75rem}
+.modal p{color:var(--text-muted);font-size:.9rem;margin-bottom:1.5rem;line-height:1.5}
+.modal-btns{display:flex;gap:.75rem}
+.modal-btns button{flex:1;padding:.7rem;border-radius:var(--radius);font-weight:600;cursor:pointer;border:none}
+.btn-cancel-modal{background:var(--gray-light);color:var(--text)}
+.btn-confirm-modal{background:var(--success);color:#fff}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .sidebar{display:none}
+  .question-main{padding:1rem}
+  .exam-header .brand{display:none}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(min-width:641px) and (max-width:900px){
+  .sidebar{width:170px}
+  .num-grid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="page-login" class="page active">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">📋</div>
+      <h1>Computer Based Test</h1>
+      <p>Good Governance & Anti Korupsi<br>Politeknik Kesehatan – Semester Genap</p>
+      <input type="text" id="input-name" placeholder="Masukkan nama lengkap Anda" autocomplete="off" maxlength="60">
+      <button class="btn-start" onclick="startExam()">Mulai Ujian →</button>
+      <div class="login-info">
+        <span class="info-chip">⏱ 30 Menit</span>
+        <span class="info-chip">📝 25 Soal</span>
+        <span class="info-chip">🎯 PG A/B/C/D</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXAM PAGE -->
+<div id="page-exam" class="page">
+  <div class="exam-wrap">
+    <div class="exam-header">
+      <div class="brand">CBT Good Governance</div>
+      <div class="header-info">
+        <span class="peserta-name" id="header-name"></span>
+        <div class="timer-box" id="timer-box">⏱ <span id="timer-display">30:00</span></div>
+      </div>
+    </div>
+    <div class="exam-body">
+      <div class="sidebar">
+        <h3>Navigasi Soal</h3>
+        <div class="num-grid" id="num-grid"></div>
+        <div class="legend">
+          <div class="legend-item"><div class="leg-dot" style="background:#fff;border:1.5px solid #e5e7eb"></div>Belum dijawab</div>
+          <div class="legend-item"><div class="leg-dot" style="background:#2563eb"></div>Sudah dijawab</div>
+          <div class="legend-item"><div class="leg-dot" style="background:#fef3c7;border:1.5px solid #d97706"></div>Ragu-ragu</div>
+        </div>
+        <div class="sidebar-actions">
+          <button class="btn-submit-sidebar" onclick="confirmSubmit()">✔ Selesai & Kumpulkan</button>
+        </div>
+      </div>
+      <div class="question-main">
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span id="prog-label">Soal 1 dari 25</span>
+            <span id="prog-pct">0%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="question-card">
+          <div class="question-meta">
+            <span class="q-badge" id="q-badge">Soal 1</span>
+          </div>
+          <div class="q-text" id="q-text"></div>
+          <div class="options" id="options-list"></div>
+        </div>
+        <div class="nav-bar">
+          <button class="btn-nav btn-prev" onclick="navigate(-1)">← Sebelumnya</button>
+          <button class="btn-nav btn-next" onclick="navigate(1)">Berikutnya →</button>
+          <button class="btn-nav btn-flag" id="btn-flag" onclick="toggleFlag()">🚩 Tandai Ragu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT PAGE -->
+<div id="page-result" class="page">
+  <div class="result-wrap">
+    <div class="result-card">
+      <div class="result-header">
+        <div class="score-circle" id="score-circle">
+          <span id="result-score">0</span>
+          <span style="font-size:.9rem;font-weight:500">Nilai</span>
+        </div>
+        <div class="predikat" id="result-predikat"></div>
+        <div class="result-name" id="result-name-display"></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box correct"><div class="stat-num" id="stat-correct">0</div><div class="stat-label">Jawaban Benar</div></div>
+        <div class="stat-box wrong"><div class="stat-num" id="stat-wrong">0</div><div class="stat-label">Jawaban Salah</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-unanswered">0</div><div class="stat-label">Tidak Dijawab</div></div>
+      </div>
+      <canvas id="result-chart" height="180"></canvas>
+      <div class="result-actions">
+        <button class="btn-review" onclick="showReview()">🔍 Review Jawaban</button>
+        <button class="btn-retry" onclick="retryExam()">🔄 Ulangi Ujian</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW PAGE -->
+<div id="page-review" class="page">
+  <div class="review-wrap">
+    <div class="review-header">
+      <button class="btn-back" onclick="showResult()">← Kembali ke Hasil</button>
+      <h2 style="font-size:1.1rem">Review Jawaban</h2>
+    </div>
+    <div id="review-content"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">Kumpulkan Ujian?</h3>
+    <p id="modal-msg"></p>
+    <div class="modal-btns">
+      <button class="btn-cancel-modal" onclick="closeModal()">Batal</button>
+      <button class="btn-confirm-modal" onclick="submitExam()">Ya, Kumpulkan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS_BANK = [
+  {
+    q:"Menurut UNDP, Good Governance mengandung berapa karakteristik utama yang harus dipenuhi agar tata kelola pemerintahan dapat dikatakan baik?",
+    opts:["6 karakteristik","9 karakteristik","12 karakteristik","5 karakteristik"],
+    ans:1,
+    pembahasan:"UNDP menetapkan 9 karakteristik Good Governance, yaitu: Partisipasi, Penegakan Hukum, Transparansi, Daya Tanggap, Berorientasi Konsensus, Keadilan/Kesetaraan, Efektivitas & Efisiensi, Akuntabilitas, dan Visi Strategis."
+  },
+  {
+    q:"Prinsip Good Governance yang menyatakan bahwa setiap warga negara memiliki kesempatan yang sama untuk memperoleh kesejahteraan meskipun kemampuan individu berlainan disebut...",
+    opts:["Transparansi","Partisipasi","Equity (Keadilan/Kesetaraan)","Akuntabilitas"],
+    ans:2,
+    pembahasan:"Equity (Keadilan/Kesetaraan) menekankan setiap warga negara berhak mendapat kesejahteraan yang sama. Sektor publik harus berperan agar kesejahteraan dan keadilan berjalan seiring."
+  },
+  {
+    q:"Menurut PP 101 Tahun 2000, prinsip kepemerintahan yang baik mencakup delapan prinsip. Manakah yang TIDAK termasuk di dalamnya?",
+    opts:["Profesionalitas","Pelayanan Prima","Kepemimpinan Karismatik","Supremasi Hukum"],
+    ans:2,
+    pembahasan:"PP 101 Tahun 2000 menyebutkan: Profesionalitas, Akuntabilitas, Transparansi, Pelayanan Prima, Demokrasi, Efisiensi, Efektifitas, dan Supremasi Hukum. Kepemimpinan Karismatik bukan bagian dari prinsip tersebut."
+  },
+  {
+    q:"Keterbukaan yang mencakup semua aspek aktivitas yang menyangkut kepentingan publik—mulai dari pengambilan keputusan, penggunaan dana publik, hingga tahapan evaluasi—merupakan pengertian dari...",
+    opts:["Akuntabilitas","Transparansi","Daya Tanggap","Visi Strategis"],
+    ans:1,
+    pembahasan:"Transparansi adalah keterbukaan yang mencakup semua aspek aktivitas yang menyangkut kepentingan publik, termasuk proses pengambilan keputusan, penggunaan dana publik, hingga evaluasi."
+  },
+  {
+    q:"Dalam konteks Good Governance, Akuntabilitas mencakup beberapa jenis. Manakah yang BUKAN merupakan jenis akuntabilitas?",
+    opts:["Akuntabilitas Organisasional","Akuntabilitas Legal","Akuntabilitas Emosional","Akuntabilitas Moral"],
+    ans:2,
+    pembahasan:"Akuntabilitas meliputi: Organisasional/Administratif, Legal, Politik, Profesional, dan Moral. Akuntabilitas Emosional bukan termasuk klasifikasi yang diakui dalam Good Governance."
+  },
+  {
+    q:"Reformasi Birokrasi pada dasarnya merupakan proses menata ulang, mengubah, memperbaiki, dan menyempurnakan birokrasi. Tujuannya adalah menjadikan birokrasi...",
+    opts:["Lebih besar dan lebih kuat","Profesional, bersih, efisien, efektif, dan produktif","Netral secara politik dan tanpa pengawasan","Mandiri dan tidak bergantung pada anggaran negara"],
+    ans:1,
+    pembahasan:"Menurut Roadmap RB Kemenkes, Reformasi Birokrasi adalah proses menata ulang birokrasi agar menjadi lebih baik: profesional, bersih, efisien, efektif, dan produktif."
+  },
+  {
+    q:"Visi Reformasi Birokrasi Indonesia adalah...",
+    opts:["Terwujudnya pelayanan publik yang gratis dan merata","Terwujudnya pemerintah yang amanah atau tata pemerintahan yang baik","Mewujudkan Indonesia bebas korupsi tahun 2030","Birokrasi yang kecil, efisien, dan berbasis teknologi"],
+    ans:1,
+    pembahasan:"Visi Reformasi Birokrasi adalah 'Terwujudnya pemerintah yang amanah atau tata pemerintahan yang baik', yang mencerminkan cita-cita pemerintahan bersih dan bertanggung jawab."
+  },
+  {
+    q:"Salah satu misi Reformasi Birokrasi adalah melakukan penataan dan penguatan organisasi. Komponen apa yang termasuk dalam misi tersebut?",
+    opts:["Pembubaran lembaga negara yang tidak produktif","Tatalaksana, manajemen SDM aparatur, pengawasan, akuntabilitas, dan pelayanan publik","Menghapus regulasi yang menghambat investasi asing","Menyatukan semua kementerian ke dalam satu lembaga"],
+    ans:1,
+    pembahasan:"Misi RB mencakup penataan dan penguatan organisasi, tatalaksana, manajemen SDM aparatur, pengawasan, akuntabilitas, kualitas pelayanan publik, mind set dan culture set."
+  },
+  {
+    q:"Faktor sukses Reformasi Birokrasi yang berkaitan dengan kemauan dan keikhlasan penyelenggara pemerintahan untuk mereformasi diri sendiri disebut sebagai...",
+    opts:["Komitmen Pimpinan","Kemauan Diri Sendiri","Kesepahaman","Konsistensi"],
+    ans:1,
+    pembahasan:"Kemauan Diri Sendiri adalah faktor sukses RB yang merujuk pada kemauan dan keikhlasan penyelenggara pemerintahan (birokrasi) untuk mereformasi diri sendiri."
+  },
+  {
+    q:"Dalam Tata Kelola Perguruan Tinggi yang Baik (Good University Governance) sesuai Permendikbud No. 139 Tahun 2014 Pasal 63, terdapat berapa prinsip utama?",
+    opts:["3 prinsip","4 prinsip","5 prinsip","6 prinsip"],
+    ans:2,
+    pembahasan:"Permendikbud No. 139 Tahun 2014 Pasal 63 menetapkan 5 prinsip Good University Governance: Akuntabilitas, Transparansi, Nirlaba, Penjaminan Mutu, serta Efektivitas dan Efisiensi."
+  },
+  {
+    q:"Prinsip Good University Governance yang menyatakan bahwa setiap kegiatan yang dilakukan tidak bertujuan mencari keuntungan atau sisa hasil usaha adalah prinsip...",
+    opts:["Akuntabilitas","Efisiensi","Nirlaba","Transparansi"],
+    ans:2,
+    pembahasan:"Prinsip Nirlaba dalam GUG menyatakan bahwa setiap kegiatan yang dilakukan Perguruan Tinggi tidak bertujuan mencari keuntungan atau sisa hasil usaha."
+  },
+  {
+    q:"Prinsip transparansi dalam Good University Governance mengharuskan perguruan tinggi untuk...",
+    opts:["Mempublikasikan laporan keuangan setiap hari","Terbuka dan menyajikan informasi relevan secara cepat dan akurat kepada pemangku kepentingan","Memberikan akses bebas ke seluruh data mahasiswa","Melarang rapat tertutup di semua tingkatan"],
+    ans:1,
+    pembahasan:"Prinsip Transparansi GUG mengharuskan PT terbuka dan menyajikan informasi yang relevan secara cepat dan akurat kepada pemangku kepentingan, termasuk keterbukaan dalam pengambilan keputusan."
+  },
+  {
+    q:"Menurut PP 60 Tahun 2008 Bab I Pasal 1, Sistem Pengendalian Intern (SPI) adalah proses yang bersifat...",
+    opts:["Periodik dan eksternal","Integral pada tindakan dan kegiatan yang dilakukan secara terus menerus oleh pimpinan dan seluruh pegawai","Opsional dan tergantung keputusan pimpinan","Formal dan hanya dilakukan oleh auditor independen"],
+    ans:1,
+    pembahasan:"SPI adalah proses yang integral pada tindakan dan kegiatan yang dilakukan secara terus menerus oleh pimpinan dan seluruh pegawai untuk memberikan keyakinan memadai atas tercapainya tujuan organisasi."
+  },
+  {
+    q:"Tujuan SPI menurut PP 60 Tahun 2008 mencakup empat hal. Manakah yang BUKAN merupakan tujuan SPI?",
+    opts:["Kegiatan yang efektif dan efisien","Keandalan pelaporan keuangan","Peningkatan gaji pegawai","Ketaatan terhadap peraturan perundang-undangan"],
+    ans:2,
+    pembahasan:"Tujuan SPI adalah: (1) kegiatan efektif dan efisien, (2) keandalan pelaporan keuangan, (3) pengamanan aset negara, dan (4) ketaatan terhadap peraturan perundang-undangan. Peningkatan gaji bukan tujuan SPI."
+  },
+  {
+    q:"SPIP memiliki 5 unsur utama. Unsur yang berkaitan dengan kondisi dalam instansi pemerintah yang mempengaruhi efektivitas pengendalian intern disebut...",
+    opts:["Penilaian Risiko","Lingkungan Pengendalian","Kegiatan Pengendalian","Pemantauan Pengendalian Intern"],
+    ans:1,
+    pembahasan:"Lingkungan Pengendalian adalah unsur SPIP yang mencakup kondisi dalam instansi pemerintah yang mempengaruhi efektivitas pengendalian intern, termasuk integritas, nilai etika, dan kompetensi SDM."
+  },
+  {
+    q:"Unsur SPIP yang berupa kegiatan penilaian atas kemungkinan kejadian yang mengancam pencapaian tujuan dan sasaran instansi pemerintah adalah...",
+    opts:["Lingkungan Pengendalian","Kegiatan Pengendalian","Penilaian Risiko","Informasi dan Komunikasi"],
+    ans:2,
+    pembahasan:"Penilaian Risiko adalah unsur SPIP yang mencakup kegiatan identifikasi dan penilaian atas kemungkinan kejadian yang mengancam pencapaian tujuan dan sasaran instansi pemerintah."
+  },
+  {
+    q:"Zona Integritas (ZI) adalah sebutan atau predikat yang diberikan kepada K/L dan Pemda yang memiliki...",
+    opts:["Anggaran terbesar dalam pengawasan","Niat (komitmen) untuk mewujudkan WBK dan WBBM","Jumlah pegawai terbanyak dengan sertifikasi","Hasil audit BPK dengan predikat Wajar Tanpa Pengecualian"],
+    ans:1,
+    pembahasan:"ZI adalah sebutan/predikat bagi K/L dan Pemda yang pimpinan dan jajarannya mempunyai niat (komitmen) untuk mewujudkan WBK dan WBBM melalui pencegahan korupsi, RB, dan peningkatan pelayanan publik."
+  },
+  {
+    q:"WBK (Wilayah Bebas dari Korupsi) diberikan kepada unit kerja yang memperoleh hasil penilaian indikator proses di atas nilai...",
+    opts:["60","70","75","80"],
+    ans:2,
+    pembahasan:"WBK diberikan kepada unit kerja yang memenuhi syarat indikator hasil WBK dan memperoleh hasil penilaian indikator proses di atas 75 pada ZI yang telah memperoleh opini WDP dari BPK."
+  },
+  {
+    q:"Perbedaan utama antara WBK dan WBBM terletak pada tiga aspek. Manakah yang BUKAN merupakan aspek pembeda keduanya?",
+    opts:["Kematangan implementasi perubahan","Keberlanjutan perubahan","Luas wilayah kerja instansi","Kualitas kinerja dan pelayanan"],
+    ans:2,
+    pembahasan:"Perbedaan WBK dan WBBM terletak pada: (1) kematangan implementasi perubahan, (2) keberlanjutan perubahan, dan (3) kualitas kinerja dan pelayanan. Luas wilayah bukan faktor pembeda."
+  },
+  {
+    q:"Penyuluhan Anti Korupsi didefinisikan sebagai suatu upaya yang dilakukan kepada individu, keluarga, kelompok atau masyarakat melalui pendekatan edukatif agar...",
+    opts:["Takut terhadap hukum dan sanksi korupsi","Menjadi pribadi yang antikorupsi dan turut serta dalam pemberantasan korupsi","Melaporkan setiap tindakan yang dicurigai sebagai korupsi kepada polisi","Menjauhi dunia politik dan pemerintahan"],
+    ans:1,
+    pembahasan:"Penyuluhan Anti Korupsi bertujuan agar peserta dapat menjadi pribadi yang antikorupsi dan turut serta dalam pemberantasan korupsi sesuai peran dan kemampuannya saat ini."
+  },
+  {
+    q:"Keterampilan dasar penyuluh antikorupsi pada unit kompetensi tingkat dasar (pertama) terdiri dari berapa unit kompetensi?",
+    opts:["3 unit","4 unit","5 unit","6 unit"],
+    ans:2,
+    pembahasan:"Ada 5 unit kompetensi dasar penyuluh antikorupsi: (1) Merencanakan Penyuluhan, (2) Mengorganisasikan Penyuluhan, (3) Melaksanakan Penyuluhan, (4) Mengevaluasi Penyuluhan, (5) Membuat Laporan Kegiatan Penyuluhan."
+  },
+  {
+    q:"Training Need Analysis (TNA) dilakukan untuk mengidentifikasi kesenjangan antara...",
+    opts:["Jumlah penyuluh dan jumlah peserta","Hasil pekerjaan (kinerja) sekarang dengan kinerja yang diharapkan sesuai standar","Anggaran pelatihan dan realisasi biaya","Metode penyuluhan lama dan metode baru"],
+    ans:1,
+    pembahasan:"TNA membandingkan antara hasil pekerjaan (kinerja) sekarang yang sedang dikerjakan dengan apa yang diinginkan (kinerja yang diharapkan) sesuai standar yang ditetapkan."
+  },
+  {
+    q:"Dalam metode penyuluhan antikorupsi, presentasi yang menggunakan format 20 slide dengan masing-masing slide ditampilkan selama 20 detik (total 6 menit 40 detik) disebut...",
+    opts:["Metode Fishbowl","Pecha Kucha","Brainstorming","Advisory Group"],
+    ans:1,
+    pembahasan:"Pecha Kucha (artinya chit-chat) adalah metode presentasi sederhana dengan 20 slide, masing-masing 20 detik (20x20 rules). Total waktu 6 menit 40 detik. Pertama diadakan di Tokyo pada Februari 2003."
+  },
+  {
+    q:"Dokumen perencanaan penyuluhan yang menginformasikan gambaran umum dan penjelasan mengenai keluaran kegiatan yang akan dicapai menggunakan prinsip 5W+1H disebut...",
+    opts:["Laporan Hasil TNA","Term of Reference (TOR) / Kerangka Acuan Kerja (KAK)","Lesson Plan PDKT","Evaluasi Kirkpatrick Level 1"],
+    ans:1,
+    pembahasan:"TOR (Term of Reference) atau KAK (Kerangka Acuan Kerja) adalah dokumen yang menginformasikan gambaran umum kegiatan dengan prinsip 5W+1H: What, Why, Who, When, How, How Much."
+  },
+  {
+    q:"Model evaluasi pelatihan yang dikembangkan oleh Kirkpatrick terdiri dari empat level. Evaluasi level 3 (Behavior) berfokus pada...",
+    opts:["Reaksi/kepuasan peserta terhadap pelatihan","Perubahan pengetahuan dan keterampilan peserta","Perubahan perilaku yang berdampak pada kinerja","Hasil akhir berupa peningkatan produktivitas organisasi"],
+    ans:2,
+    pembahasan:"Level 3 Kirkpatrick (Behavior/Tingkah Laku) mengukur perubahan perilaku yang berdampak pada kinerja peserta. Cara mengukurnya dengan serangkaian test dan observasi pasca pelatihan."
+  }
+];
+
+let pesertaName="", shuffledQ=[], userAnswers=[], flagged=[], currentIdx=0, timerInterval=null, secondsLeft=1800, examFinished=false;
+
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active')}
+
+function startExam(){
+  const n=document.getElementById('input-name').value.trim();
+  if(!n){alert('Silakan masukkan nama Anda terlebih dahulu.');return;}
+  pesertaName=n;
+  shuffledQ=[...QUESTIONS_BANK].sort(()=>Math.random()-.5);
+  userAnswers=new Array(25).fill(-1);
+  flagged=new Array(25).fill(false);
+  currentIdx=0;secondsLeft=1800;examFinished=false;
+  document.getElementById('header-name').textContent=pesertaName;
+  buildNumGrid();
+  renderQuestion();
+  startTimer();
+  showPage('page-exam');
+}
+
+function buildNumGrid(){
+  const g=document.getElementById('num-grid');g.innerHTML='';
+  for(let i=0;i<25;i++){
+    const b=document.createElement('button');
+    b.className='num-btn';b.id='nb-'+i;b.textContent=i+1;
+    b.onclick=(()=>{const idx=i;return()=>goTo(idx)})();
+    g.appendChild(b);
+  }
+  updateNumGrid();
+}
+
+function updateNumGrid(){
+  for(let i=0;i<25;i++){
+    const b=document.getElementById('nb-'+i);
+    b.className='num-btn';
+    if(userAnswers[i]>=0) b.classList.add('answered');
+    if(flagged[i]) b.classList.add('flagged');
+    if(i===currentIdx) b.classList.add('current');
+  }
+}
+
+function renderQuestion(){
+  const q=shuffledQ[currentIdx];
+  document.getElementById('q-badge').textContent='Soal '+(currentIdx+1)+' dari 25';
+  document.getElementById('q-text').textContent=q.q;
+  const ol=document.getElementById('options-list');ol.innerHTML='';
+  const letters=['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn'+(userAnswers[currentIdx]===i?' selected':'');
+    btn.innerHTML=`<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick=()=>selectAnswer(i);
+    ol.appendChild(btn);
+  });
+  const answered=userAnswers.filter(a=>a>=0).length;
+  document.getElementById('prog-label').textContent='Soal '+(currentIdx+1)+' dari 25';
+  document.getElementById('prog-pct').textContent=Math.round(answered/25*100)+'%';
+  document.getElementById('progress-fill').style.width=(answered/25*100)+'%';
+  const fb=document.getElementById('btn-flag');
+  fb.classList.toggle('active',flagged[currentIdx]);
+  fb.textContent=flagged[currentIdx]?'🚩 Ditandai':'🚩 Tandai Ragu';
+  updateNumGrid();
+}
+
+function selectAnswer(i){userAnswers[currentIdx]=i;renderQuestion()}
+
+function navigate(dir){
+  const nxt=currentIdx+dir;
+  if(nxt>=0&&nxt<25){currentIdx=nxt;renderQuestion()}
+}
+
+function goTo(i){currentIdx=i;renderQuestion()}
+
+function toggleFlag(){flagged[currentIdx]=!flagged[currentIdx];renderQuestion()}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=Math.floor(secondsLeft/60),s=secondsLeft%60;
+    document.getElementById('timer-display').textContent=m+':'+(s<10?'0':'')+s;
+    if(secondsLeft===300){
+      document.getElementById('timer-box').classList.add('warn');
+      showModal('Peringatan Waktu!','Sisa waktu 5 menit. Segera selesaikan ujian Anda.');
+    }
+    if(secondsLeft<=0){clearInterval(timerInterval);submitExam();}
+  },1000);
+}
+
+function confirmSubmit(){
+  const unanswered=userAnswers.filter(a=>a<0).length;
+  showModal('Kumpulkan Ujian?',`Anda masih memiliki ${unanswered} soal yang belum dijawab. Apakah yakin ingin mengumpulkan?`);
+}
+
+function showModal(title,msg){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-msg').textContent=msg;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+
+function submitExam(){
+  closeModal();
+  if(examFinished)return;
+  examFinished=true;
+  clearInterval(timerInterval);
+  let correct=0;
+  shuffledQ.forEach((q,i)=>{if(userAnswers[i]===q.ans)correct++});
+  const wrong=userAnswers.filter((a,i)=>a>=0&&a!==shuffledQ[i].ans).length;
+  const unanswered=userAnswers.filter(a=>a<0).length;
+  const score=Math.round(correct/25*100);
+  let grade='',cls='';
+  if(score>=90){grade='Sangat Baik';cls='grade-a'}
+  else if(score>=80){grade='Baik';cls='grade-b'}
+  else if(score>=70){grade='Cukup';cls='grade-c'}
+  else{grade='Perlu Belajar Lagi';cls='grade-d'}
+  document.getElementById('result-score').textContent=score;
+  const circle=document.getElementById('score-circle');
+  circle.className='score-circle '+cls;
+  document.getElementById('result-predikat').textContent='Predikat: '+grade;
+  document.getElementById('result-name-display').textContent='Peserta: '+pesertaName;
+  document.getElementById('stat-correct').textContent=correct;
+  document.getElementById('stat-wrong').textContent=wrong;
+  document.getElementById('stat-unanswered').textContent=unanswered;
+  drawChart(correct,wrong,unanswered);
+  showPage('page-result');
+}
+
+function drawChart(correct,wrong,unanswered){
+  const canvas=document.getElementById('result-chart');
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.offsetWidth||500;canvas.height=200;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const data=[correct,wrong,unanswered];
+  const colors=['#16a34a','#dc2626','#d97706'];
+  const labels=['Benar','Salah','Belum Dijawab'];
+  const cx=canvas.width/2,cy=canvas.height/2,r=Math.min(cx,cy)-20;
+  let startAngle=-Math.PI/2;
+  const total=25;
+  data.forEach((val,i)=>{
+    const slice=val/total*2*Math.PI;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,startAngle,startAngle+slice);
+    ctx.closePath();ctx.fillStyle=colors[i];ctx.fill();
+    startAngle+=slice;
+  });
+  ctx.beginPath();ctx.arc(cx,cy,r*0.55,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  const legendX=cx+r+20;let legendY=cy-30;
+  data.forEach((val,i)=>{
+    ctx.fillStyle=colors[i];ctx.fillRect(legendX,legendY,12,12);
+    ctx.fillStyle='#374151';ctx.font='13px Segoe UI,sans-serif';
+    ctx.fillText(labels[i]+' ('+val+')',legendX+18,legendY+11);
+    legendY+=24;
+  });
+  ctx.fillStyle='#111827';ctx.font='bold 22px Segoe UI,sans-serif';ctx.textAlign='center';
+  ctx.fillText(correct+'/25',cx,cy+4);ctx.font='11px Segoe UI,sans-serif';
+  ctx.fillStyle='#6b7280';ctx.fillText('Benar',cx,cy+18);
+  ctx.textAlign='left';
+}
+
+function showReview(){
+  const content=document.getElementById('review-content');content.innerHTML='';
+  const letters=['A','B','C','D'];
+  shuffledQ.forEach((q,i)=>{
+    const ua=userAnswers[i],ca=q.ans;
+    let cls='',badge='';
+    if(ua<0){cls='unanswered-item';badge='<span style="color:#d97706;font-size:.78rem">⚠ Tidak Dijawab</span>'}
+    else if(ua===ca){cls='correct-item';badge='<span style="color:#16a34a;font-size:.78rem">✔ Benar</span>'}
+    else{cls='wrong-item';badge='<span style="color:#dc2626;font-size:.78rem">✘ Salah</span>'}
+    let optsHtml='';
+    q.opts.forEach((opt,j)=>{
+      let cls2='review-option';
+      if(j===ca){cls2+=' correct-ans';}
+      else if(j===ua&&ua!==ca){cls2+=' user-ans';}
+      optsHtml+=`<div class="${cls2}"><strong>${letters[j]}.</strong> ${opt}</div>`;
+    });
+    content.innerHTML+=`<div class="review-item ${cls}">
+      <div style="display:flex;justify-content:space-between;margin-bottom:.5rem"><span style="font-size:.78rem;color:#6b7280">Soal ${i+1}</span>${badge}</div>
+      <div class="review-q">${q.q}</div>
+      ${optsHtml}
+      <div class="pembahasan"><strong>💡 Pembahasan:</strong>${q.pembahasan}</div>
+    </div>`;
+  });
+  showPage('page-review');
+}
+
+function showResult(){showPage('page-result')}
+
+function retryExam(){
+  clearInterval(timerInterval);
+  showPage('page-login');
+  document.getElementById('input-name').value='';
+}
+</script>
+</body>
+</html>
